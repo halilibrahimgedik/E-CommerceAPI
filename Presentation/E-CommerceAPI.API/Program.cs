@@ -7,9 +7,7 @@ builder.Services.AddControllers();
 
 
 //  1-) Servislerin eklenmesi
-builder.Services.AddPersistenceServices();
-
-
+builder.Services.AddPersistenceServices(builder.Configuration);
 
 
 builder.Services.AddEndpointsApiExplorer();

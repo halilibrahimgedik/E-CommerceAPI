@@ -1,5 +1,8 @@
 ﻿using E_CommerceAPI.Application.Abstractions;
 using E_CommerceAPI.Persistence.Concretes;
+using E_CommerceAPI.Persistence.Contexts;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -11,8 +14,13 @@ namespace E_CommerceAPI.Persistence
 {
     public static class ServiceRegistiration
     {
-        public static void AddPersistenceServices(this IServiceCollection services)
+        public static void AddPersistenceServices(this IServiceCollection services,IConfiguration conf)
         {
+            services.AddDbContext<ECommerceAPIDbContext>(options =>
+            {
+                options.UseNpgsql(conf.GetConnectionString("PostgreSql"));
+            });
+
             services.AddSingleton<IProductService, ProductService>();
         }
     }

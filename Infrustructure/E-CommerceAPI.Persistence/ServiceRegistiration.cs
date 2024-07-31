@@ -1,6 +1,8 @@
 ﻿using E_CommerceAPI.Application.Abstractions;
+using E_CommerceAPI.Application.Repositories;
 using E_CommerceAPI.Persistence.Concretes;
 using E_CommerceAPI.Persistence.Contexts;
+using E_CommerceAPI.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +23,14 @@ namespace E_CommerceAPI.Persistence
                 options.UseNpgsql(conf.GetConnectionString("PostgreSql"));
             });
 
-            services.AddSingleton<IProductService, ProductService>();
+            services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
+            services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
+
+            services.AddScoped<IOrderReadRepository, OrderReadRepository>();
+            services.AddScoped<IOrderWriteRepository, OrderWriteRepository>();
+
+            services.AddScoped<IProductReadRepository, ProductReadRepository>();
+            services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
         }
     }
 }

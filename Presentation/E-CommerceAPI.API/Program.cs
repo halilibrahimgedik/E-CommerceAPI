@@ -10,6 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddPersistenceServices(builder.Configuration);
 
 
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -21,7 +22,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection(); 
 
 app.UseAuthorization();
 

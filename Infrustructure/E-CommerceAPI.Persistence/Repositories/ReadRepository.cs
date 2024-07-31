@@ -21,18 +21,46 @@ namespace E_CommerceAPI.Persistence.Repositories
         }
 
 
-        public DbSet<T> Table => _context.Set<T>();
+        public DbSet<T> Table 
+            => _context.Set<T>();
 
-        public IQueryable<T> GetAll() => Table;
+        public IQueryable<T> GetAll(bool tracking = true)
+        {
+            var query = Table.AsQueryable();
+            if(!tracking)
+                query = query.AsNoTracking();
 
-        public IQueryable<T> GetWehere(Expression<Func<T, bool>> expression)
-            => Table.Where(expression);
+            return query;
+        }
 
-        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> expression)
-            => await Table.FirstOrDefaultAsync(expression);
+        public IQueryable<T> GetWehere(Expression<Func<T, bool>> expression, bool tracking = true)
+        {
+            var query = Table.Where(expression);
 
-        public async Task<T> GetByIdAsync(string id)
-            => await Table.FindAsync(Guid.Parse(id));
-                /*await Table.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id));*/
+            if(!tracking)
+                query = query.AsNoTracking();
+
+            return query;
+        }
+
+        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> expression, bool tracking = true)
+        {
+            var query = Table.AsQueryable();
+            if (!tracking)
+                query = query.AsNoTracking();
+
+            return await query.FirstOrDefaultAsync(expression);
+        }
+
+        public async Task<T> GetByIdAsync(string id, bool tracking = true)
+        {
+            var query = Table.AsQueryable();
+            if (!tracking)
+                query = query.AsNoTracking();
+
+            return await query.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id)); 
+            // IQueryable ile çalışırken FindAsync metodu yoktur
+        }
+
     }
 }

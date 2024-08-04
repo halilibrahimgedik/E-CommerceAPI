@@ -1,6 +1,4 @@
-﻿using E_CommerceAPI.Application.Abstractions;
-using E_CommerceAPI.Application.Repositories;
-using E_CommerceAPI.Persistence.Concretes;
+﻿using E_CommerceAPI.Application.Repositories;
 using E_CommerceAPI.Persistence.Contexts;
 using E_CommerceAPI.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;

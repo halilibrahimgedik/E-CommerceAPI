@@ -31,6 +31,7 @@ namespace E_CommerceAPI.Persistence.Contexts
                 {
                     EntityState.Added => data.Entity.CreatedDate = DateTime.UtcNow.AddHours(3),
                     EntityState.Modified => data.Entity.UpdatedDate = DateTime.UtcNow.AddHours(3),
+                    _ => DateTime.UtcNow.AddHours(3)
                 };
             }
 

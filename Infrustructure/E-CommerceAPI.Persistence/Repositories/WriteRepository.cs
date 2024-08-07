@@ -38,6 +38,11 @@ namespace E_CommerceAPI.Persistence.Repositories
 
         public bool Remove(T model)
         {
+            if(model == null)
+            {
+                return false;
+            }
+
             EntityEntry entityEntry = Table.Remove(model);
 
             return entityEntry.State == EntityState.Deleted;
@@ -64,6 +69,9 @@ namespace E_CommerceAPI.Persistence.Repositories
             return entityEntry.State == EntityState.Modified;
         }
 
-        public async Task<int> SaveAsync() => await _context.SaveChangesAsync();
+        public async Task<int> SaveAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
     }
 }

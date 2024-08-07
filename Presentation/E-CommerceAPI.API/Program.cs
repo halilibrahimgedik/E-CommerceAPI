@@ -1,16 +1,27 @@
+using E_CommerceAPI.Application.Validators.Products;
+using E_CommerceAPI.Infrustructure.Filters;
 using E_CommerceAPI.Persistence;
-using Microsoft.AspNetCore.Cors.Infrastructure;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>());
 
+// 3.0 -) FluentValidation Sýnfýlarý Ekleme
+builder.Services.AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters()
+                .AddValidatorsFromAssemblyContaining<CreateProductValidator>();
+
+// 3.1 -) Default dönen ModelState Hata nesnesini Kapama 
+builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
 
 //  1-) Servislerin eklenmesi
 builder.Services.AddPersistenceServices(builder.Configuration);
 
-// 2*) CORS POLICY Yapýlandýrmasý
+// 2-) CORS POLICY Yapýlandýrmasý
 builder.Services.AddCors(optioms =>
 {
     optioms.AddDefaultPolicy(policy =>
@@ -34,10 +45,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+
+app.UseHttpsRedirection();
+
+// wwwroot'u kullanabilmek, sunucuda depolayabilmek için ekliyoruz.
+app.UseStaticFiles();
+
 // CORS Miidleware'ini çaðýrýyoruz
 app.UseCors();
-
-app.UseHttpsRedirection(); 
 
 app.UseAuthorization();
 

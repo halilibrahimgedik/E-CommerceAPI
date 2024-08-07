@@ -1,9 +1,12 @@
 ﻿using E_CommerceAPI.API.Controllers;
 using E_CommerceAPI.Application.Repositories;
+using E_CommerceAPI.Application.RequestParameters;
 using E_CommerceAPI.Application.ViewModels.Product;
 using E_CommerceAPI.Domain.Entities;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace E_CommerceAPI.API.Controllers
@@ -14,18 +17,33 @@ namespace E_CommerceAPI.API.Controllers
     {
         private readonly IProductReadRepository _productReadRepository;
         private readonly IProductWriteRepository _productWriteRepository;
-        public TestsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public TestsController(
+            IProductWriteRepository productWriteRepository, 
+            IProductReadRepository productReadRepository,
+            IWebHostEnvironment webHostEnvironment)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
+            this._webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet]
-        public IActionResult ProductList()
+        public async Task<IActionResult> ProductList([FromQuery]Pagination pagination)
         {
-            var products = _productReadRepository.GetAll(false);
+            var products = await _productReadRepository.GetAll(false).Select( p=> new
+            {
+                p.Id,
+                p.Name,
+                p.Stock,
+                p.Price,
+                p.CreatedDate,
+                p.UpdatedDate,
+            }).Skip(pagination.Page * pagination.SizePerPage).Take(pagination.SizePerPage).ToListAsync();
 
-            return Ok(products);
+            var totalCount = _productReadRepository.GetAll(false).Count();
+
+            return Ok(new { products, totalCount });
         }
 
         [HttpGet("{id}")]
@@ -69,9 +87,30 @@ namespace E_CommerceAPI.API.Controllers
         public async Task<IActionResult> DeleteProduct(string id)
         {
             await _productWriteRepository.RemoveAsync(id);
-            await _productWriteRepository.SaveAsync();
+            var a = await _productWriteRepository.SaveAsync();
 
-            return StatusCode((int)HttpStatusCode.NoContent);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Upload()
+        {
+            //wwwroot/resource/product-images
+            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "images/product-images");
+
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            Random r = new();
+            foreach (IFormFile file in Request.Form.Files)
+            {
+                string fullPath = Path.Combine(uploadPath, $"{r.Next()}{Path.GetExtension(file.FileName)}");
+
+                using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
+                await file.CopyToAsync(fileStream);
+                await fileStream.FlushAsync();
+            }
+            return Ok();
         }
     }
 }

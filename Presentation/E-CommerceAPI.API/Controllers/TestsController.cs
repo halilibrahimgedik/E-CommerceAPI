@@ -1,6 +1,7 @@
 ﻿using E_CommerceAPI.API.Controllers;
 using E_CommerceAPI.Application.Repositories;
 using E_CommerceAPI.Application.RequestParameters;
+using E_CommerceAPI.Application.Services;
 using E_CommerceAPI.Application.ViewModels.Product;
 using E_CommerceAPI.Domain.Entities;
 using Microsoft.AspNetCore.Hosting;
@@ -18,14 +19,18 @@ namespace E_CommerceAPI.API.Controllers
         private readonly IProductReadRepository _productReadRepository;
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IFileService _fileService;
         public TestsController(
             IProductWriteRepository productWriteRepository, 
             IProductReadRepository productReadRepository,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            IFileService fileService)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
-            this._webHostEnvironment = webHostEnvironment;
+            _webHostEnvironment = webHostEnvironment;
+            _fileService = fileService;
+
         }
 
         [HttpGet]
@@ -95,22 +100,9 @@ namespace E_CommerceAPI.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Upload()
         {
-            //wwwroot/resource/product-images
-            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "images/product-images");
+            var datas = await _fileService.UploadAsync("images/product-images", Request.Form.Files);
 
-            if (!Directory.Exists(uploadPath))
-                Directory.CreateDirectory(uploadPath);
-
-            Random r = new();
-            foreach (IFormFile file in Request.Form.Files)
-            {
-                string fullPath = Path.Combine(uploadPath, $"{r.Next()}{Path.GetExtension(file.FileName)}");
-
-                using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
-                await file.CopyToAsync(fileStream);
-                await fileStream.FlushAsync();
-            }
-            return Ok();
+            return Ok(datas);
         }
     }
 }

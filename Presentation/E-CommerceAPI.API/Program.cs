@@ -1,4 +1,5 @@
 using E_CommerceAPI.Application.Validators.Products;
+using E_CommerceAPI.Infrustructure;
 using E_CommerceAPI.Infrustructure.Filters;
 using E_CommerceAPI.Persistence;
 using FluentValidation;
@@ -18,8 +19,12 @@ builder.Services.AddFluentValidationAutoValidation()
 builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
 
-//  1-) Servislerin eklenmesi
+//  1-) Servislerin eklenmesi Persistence Layer
 builder.Services.AddPersistenceServices(builder.Configuration);
+
+// 4-) Servislerin eklenmesi Infrastructure Layer
+builder.Services.AddInfrastructureServices();
+
 
 // 2-) CORS POLICY Yapýlandýrmasý
 builder.Services.AddCors(optioms =>

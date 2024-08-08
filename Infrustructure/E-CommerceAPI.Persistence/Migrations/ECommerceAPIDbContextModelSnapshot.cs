@@ -43,6 +43,37 @@ namespace E_CommerceAPI.Persistence.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("E_CommerceAPI.Domain.Entities.File", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("character varying(21)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Files");
+
+                    b.HasDiscriminator().HasValue("File");
+
+                    b.UseTphMappingStrategy();
+                });
+
             modelBuilder.Entity("E_CommerceAPI.Domain.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
@@ -113,6 +144,23 @@ namespace E_CommerceAPI.Persistence.Migrations
                     b.HasIndex("ProductsId");
 
                     b.ToTable("OrderProduct");
+                });
+
+            modelBuilder.Entity("E_CommerceAPI.Domain.Entities.InvoiceFile", b =>
+                {
+                    b.HasBaseType("E_CommerceAPI.Domain.Entities.File");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.HasDiscriminator().HasValue("InvoiceFile");
+                });
+
+            modelBuilder.Entity("E_CommerceAPI.Domain.Entities.ProductImageFile", b =>
+                {
+                    b.HasBaseType("E_CommerceAPI.Domain.Entities.File");
+
+                    b.HasDiscriminator().HasValue("ProductImageFile");
                 });
 
             modelBuilder.Entity("E_CommerceAPI.Domain.Entities.Order", b =>

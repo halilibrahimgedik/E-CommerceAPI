@@ -4,6 +4,7 @@ using E_CommerceAPI.Application.RequestParameters;
 using E_CommerceAPI.Application.Services;
 using E_CommerceAPI.Application.ViewModels.Product;
 using E_CommerceAPI.Domain.Entities;
+using E_CommerceAPI.Persistence.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,19 +19,36 @@ namespace E_CommerceAPI.API.Controllers
     {
         private readonly IProductReadRepository _productReadRepository;
         private readonly IProductWriteRepository _productWriteRepository;
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IFileService _fileService;
+
+        private readonly IFileReadRepository _fileReadRepository;
+        private readonly IFileWriteRepository _fileWriteRepository;
+        private readonly IInvoiceFileReadRepository _invoiceFileReadRepository;
+        private readonly IFileWriteRepository _invoiceFileWriteRepository;
+        private readonly IProductImageFileReadRepository _productImageFileReadRepository;
+        private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
         public TestsController(
-            IProductWriteRepository productWriteRepository, 
+            IProductWriteRepository productWriteRepository,
             IProductReadRepository productReadRepository,
             IWebHostEnvironment webHostEnvironment,
-            IFileService fileService)
+            IFileService fileService,
+            IFileReadRepository fileReadRepository,
+            IFileWriteRepository fileWriteRepository,
+            IInvoiceFileReadRepository invoiceFileReadRepository,
+            IFileWriteRepository invoiceFileWriteRepository,
+            IProductImageFileReadRepository productImageFileReadRepository,
+            IProductImageFileWriteRepository productImageFileWriteRepository)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
-            _webHostEnvironment = webHostEnvironment;
             _fileService = fileService;
 
+            _fileReadRepository = fileReadRepository;
+            _fileWriteRepository = fileWriteRepository;
+            _invoiceFileReadRepository = invoiceFileReadRepository;
+            _invoiceFileWriteRepository = invoiceFileWriteRepository;
+            _productImageFileReadRepository = productImageFileReadRepository;
+            _productImageFileWriteRepository = productImageFileWriteRepository;
         }
 
         [HttpGet]

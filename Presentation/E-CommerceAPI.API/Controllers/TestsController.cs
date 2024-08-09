@@ -1,12 +1,8 @@
-﻿using E_CommerceAPI.API.Controllers;
-using E_CommerceAPI.Application.Repositories;
+﻿using E_CommerceAPI.Application.Repositories;
 using E_CommerceAPI.Application.RequestParameters;
 using E_CommerceAPI.Application.Services;
 using E_CommerceAPI.Application.ViewModels.Product;
 using E_CommerceAPI.Domain.Entities;
-using E_CommerceAPI.Persistence.Repositories;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -52,9 +48,9 @@ namespace E_CommerceAPI.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ProductList([FromQuery]Pagination pagination)
+        public async Task<IActionResult> ProductList([FromQuery] Pagination pagination)
         {
-            var products = await _productReadRepository.GetAll(false).Select( p=> new
+            var products = await _productReadRepository.GetAll(false).Select(p => new
             {
                 p.Id,
                 p.Name,
@@ -120,6 +116,13 @@ namespace E_CommerceAPI.API.Controllers
         {
             var datas = await _fileService.UploadAsync("images/product-images", Request.Form.Files);
 
+            await _productImageFileWriteRepository.AddRangeAsync(datas.Select(data => new ProductImageFile()
+            {
+                FileName = data.Key,
+                Path = data.Value,
+            }).ToList());
+
+            await _productWriteRepository.SaveAsync();
             return Ok(datas);
         }
     }

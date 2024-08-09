@@ -86,7 +86,8 @@ namespace E_CommerceAPI.Infrustructure.Services
                 bool result = await SaveFileAsync(fileFullPath, file);
 
                 //  dosyanın ismini ve path'ini Dictionary olarak kaydedelim ki kullanıcıya kaydedilen dosya adını ve yolunu döndürelim,
-                SavedFilesInfo.Add(newFileName, fileFullPath);
+                //SavedFilesInfo.Add(newFileName, fileFullPath);
+                SavedFilesInfo.Add(newFileName, path+"/"+newFileName); //!! 2. parametre images/product-images/kirimiziaraba090820240049125.jpg gibi olucak
                 results.Add(result);
             }
 

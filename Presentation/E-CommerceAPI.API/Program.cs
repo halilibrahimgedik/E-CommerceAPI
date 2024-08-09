@@ -4,6 +4,7 @@ using E_CommerceAPI.Infrustructure.Filters;
 using E_CommerceAPI.Persistence;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,6 +1,8 @@
 using E_CommerceAPI.Application.Validators.Products;
 using E_CommerceAPI.Infrustructure;
+using E_CommerceAPI.Infrustructure.Enums;
 using E_CommerceAPI.Infrustructure.Filters;
+using E_CommerceAPI.Infrustructure.Services.Storage.Local;
 using E_CommerceAPI.Persistence;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -22,9 +24,12 @@ builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelS
 
 //  1-) Servislerin eklenmesi Persistence Layer
 builder.Services.AddPersistenceServices(builder.Configuration);
-
 // 4-) Servislerin eklenmesi Infrastructure Layer
 builder.Services.AddInfrastructureServices();
+
+// 5-) Storage Servisin Belirlenmesi Infrastructure Layer (2 farklý kullanýmý var )
+builder.Services.AddStorage<LocalStorage>();
+//builder.Services.AddStorage(StorageType.Azure);
 
 
 // 2-) CORS POLICY Yapýlandýrmasý

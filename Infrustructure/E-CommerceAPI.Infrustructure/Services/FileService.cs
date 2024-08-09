@@ -1,5 +1,4 @@
 ﻿using E_CommerceAPI.Application.RequestParameters;
-using E_CommerceAPI.Application.Services;
 using E_CommerceAPI.Infrustructure.Operations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace E_CommerceAPI.Infrustructure.Services
 {
-    public class FileService : IFileService
+    public class FileService
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
 
